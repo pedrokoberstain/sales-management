@@ -1,14 +1,16 @@
 version: '3.8'
-
 services:
-
   mysql:
-    image: mysql:8.0.22
-    container_name: sales-management-mysql
-    ports:
-      - "3307:3306"
+    image: mysql:8.0
+    container_name: mysql-new-container
     environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: smanager_db
       MYSQL_USER: smanager
       MYSQL_PASSWORD: smanager
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: smanagement_db
+    ports:
+      - "3307:3306"  # Porta externa:3306 interna
+    volumes:
+      - mysql-data:/var/lib/mysql
+volumes:
+  mysql-data:
