@@ -1,4 +1,4 @@
-package com.smanager.sales_management.entidades;
+package com.smanager.sales_management.entity;
 
 import jakarta.persistence.*;
 
