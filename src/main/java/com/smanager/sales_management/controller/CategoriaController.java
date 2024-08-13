@@ -2,6 +2,7 @@ package com.smanager.sales_management.controller;
 
 import com.smanager.sales_management.entity.Categoria;
 import com.smanager.sales_management.service.CategoriaService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,13 +35,13 @@ public class CategoriaController {
     }
 
     @PostMapping
-    public ResponseEntity<Categoria> save(@RequestBody Categoria categoria) {
+    public ResponseEntity<Categoria> save(@Valid @RequestBody Categoria categoria) {
         Categoria savedCategoria = categoriaService.save(categoria);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedCategoria);
     }
 
     @PutMapping("/{codigo}")
-    public ResponseEntity<Categoria> update(@PathVariable Long codigo, @RequestBody Categoria categoria) {
+    public ResponseEntity<Categoria> update(@PathVariable Long codigo,@Valid @RequestBody Categoria categoria) {
         return ResponseEntity.ok(categoriaService.update(codigo, categoria));
     }
 }
