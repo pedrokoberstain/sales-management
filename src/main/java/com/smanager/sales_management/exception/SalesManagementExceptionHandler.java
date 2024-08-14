@@ -1,5 +1,6 @@
 package com.smanager.sales_management.exception;
 
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -8,6 +9,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
@@ -32,16 +34,23 @@ public class SalesManagementExceptionHandler extends ResponseEntityExceptionHand
         String messageUser = "Conteúdo da solicitação inválido. Por favor, verifique os dados enviados.";
         String messageDev = ex.getMessage();
         List<Exceptions> errors = List.of(new Exceptions(messageUser, messageDev));
+        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+    }
 
+    @ExceptionHandler(EmptyResultDataAccessException.class)
+    public ResponseEntity<Object> handleEmptyResultDataAccessException(EmptyResultDataAccessException ex, WebRequest request) {
+        String messageUser = "Recurso não encontrado.";
+        String messageDev = ex.toString();
+        List<Exceptions> errors = List.of(new Exceptions(messageUser, messageDev));
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 
     private List<Exceptions> generateErrorMessages(BindingResult bindingResult) {
         List<Exceptions> exceptions = new ArrayList<>();
         bindingResult.getFieldErrors().forEach(fieldError -> {
-            String msUser = fieldError.getField() + " : " + fieldError.getDefaultMessage();
-            String msDev = fieldError.toString();
-            exceptions.add(new Exceptions(msUser, msDev));
+            String messageUser = "Campo " + fieldError.getField() + ": " + fieldError.getDefaultMessage();
+            String messageDev = fieldError.toString();
+            exceptions.add(new Exceptions(messageUser, messageDev));
         });
 
         return exceptions;
