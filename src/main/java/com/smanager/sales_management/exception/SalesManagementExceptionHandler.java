@@ -27,22 +27,20 @@ public class SalesManagementExceptionHandler extends ResponseEntityExceptionHand
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 
-    @Override
-    protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex,
-                                                                  HttpHeaders headers, HttpStatusCode status, WebRequest request) {
-
-        String messageUser = "Conteúdo da solicitação inválido. Por favor, verifique os dados enviados.";
-        String messageDev = ex.getMessage();
-        List<Exceptions> errors = List.of(new Exceptions(messageUser, messageDev));
-        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
-    }
-
     @ExceptionHandler(EmptyResultDataAccessException.class)
     public ResponseEntity<Object> handleEmptyResultDataAccessException(EmptyResultDataAccessException ex, WebRequest request) {
         String messageUser = "Recurso não encontrado.";
         String messageDev = ex.toString();
         List<Exceptions> errors = List.of(new Exceptions(messageUser, messageDev));
-        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(errors, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(BusinessRuleException.class)
+    public ResponseEntity<Object> handlerBusinessRuleException (BusinessRuleException ex, WebRequest request) {
+        String messageUser = ex.getMessage();
+        String messageDev = ex.getMessage();
+        List<Exceptions> errors = List.of(new Exceptions(messageUser, messageDev));
+        return new ResponseEntity<>(errors, new HttpHeaders(), HttpStatus.BAD_REQUEST);
     }
 
     private List<Exceptions> generateErrorMessages(BindingResult bindingResult) {
