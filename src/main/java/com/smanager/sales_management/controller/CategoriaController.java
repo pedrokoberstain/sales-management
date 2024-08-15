@@ -43,9 +43,16 @@ public class CategoriaController {
         return ResponseEntity.status(HttpStatus.CREATED).body(savedCategoria);
     }
 
-    @Operation(summary = "Delete category by id")
+    @Operation(summary = "Update a category")
     @PutMapping("/{codigo}")
     public ResponseEntity<Categoria> update(@PathVariable Long codigo, @Valid @RequestBody Categoria categoria) {
         return ResponseEntity.ok(categoriaService.update(codigo, categoria));
+    }
+
+    @Operation(summary = "Delete a category")
+    @DeleteMapping("/{codigo}")
+    public ResponseEntity<Void> delete(@PathVariable Long codigo) {
+        categoriaService.delete(codigo);
+        return ResponseEntity.noContent().build();
     }
 }
