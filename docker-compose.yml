@@ -9,8 +9,38 @@ services:
       MYSQL_USER: smanager
       MYSQL_PASSWORD: smanager
     ports:
-      - "3307:3306"  # Porta externa:3306 interna
+      - "3307:3306"
     volumes:
       - mysql-data:/var/lib/mysql
+
+  jaeger-api:
+    image: jaegertracing/opentelemetry-all-in-one
+    container_name: jaeger-api
+    ports:
+      - 16686:16686
+    networks:
+      - monit
+    depends_on:
+      - collector-api
+
+  collector-api:
+    image: otel/opentelemetry-collector:latest
+    container_name: collector-api
+    volumes:
+      - ./collector/otel-collector-config.yaml:/etc/otel-collector-config.yaml
+    command: [ "--config=/etc/otel-collector-config.yaml" ]
+    ports:
+      - 4317:4317
+      - 4318:4318
+    networks:
+      - api
+      - monit
+
 volumes:
   mysql-data:
+
+networks:
+  public:
+  monit:
+  data:
+  api:
